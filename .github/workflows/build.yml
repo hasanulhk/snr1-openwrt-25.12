@@ -48,19 +48,28 @@ jobs:
         run: |
           cp -av target/linux/mediatek/dts/* openwrt/target/linux/mediatek/dts/
           cp -av target/linux/mediatek/image/filogic.mk openwrt/target/linux/mediatek/image/filogic.mk
+
       - name: Update feeds
         working-directory: openwrt
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: Build system check
+      - name: Configure firmware for SN-R1
         working-directory: openwrt
         run: |
+          echo "CONFIG_TARGET_mediatek=y" >> .config
+          echo "CONFIG_TARGET_mediatek_filogic=y" >> .config
+          echo "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_snr1_bt-snr1=y" >> .config
           make defconfig
 
-      - name: Show OpenWrt revision
+      - name: Build firmware image
         working-directory: openwrt
         run: |
-          git describe --tags --always
-          git log -1 --oneline
+          make V=s -j$(nproc)
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: openwrt-mediatek-filogic-snr1_bt-snr1-firmware
+          path: openwrt/bin/targets/mediatek/filogic/*
