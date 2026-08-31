@@ -47,7 +47,7 @@ jobs:
       - name: Inject SN-R1 Board Files
         run: |
           cp -av target/linux/mediatek/dts/* openwrt/target/linux/mediatek/dts/
-
+          cp -av target/linux/mediatek/image/filogic.mk openwrt/target/linux/mediatek/image/filogic.mk
       - name: Update feeds
         working-directory: openwrt
         run: |
