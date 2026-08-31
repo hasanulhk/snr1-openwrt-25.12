@@ -44,6 +44,10 @@ jobs:
             https://github.com/openwrt/openwrt.git \
             openwrt
 
+      - name: Inject SN-R1 Board Files
+        run: |
+          cp -av target/linux/mediatek/dts/* openwrt/target/linux/mediatek/dts/
+
       - name: Update feeds
         working-directory: openwrt
         run: |
