@@ -1,0 +1,60 @@
+/dts-v1/;
+
+#include "mt7981.dtsi"
+
+/ {
+    model = "SN-R1";
+    compatible = "snr1,bt-snr1", "mediatek,mt7981";
+
+    aliases {
+        ethernet0 = &eth;
+        led-boot = &status_led;
+        led-failsafe = &status_led;
+    };
+
+    chosen {
+        bootargs = "console=ttyS0,115200n8";
+    };
+
+    memory@40000000 {
+        device_type = "memory";
+        reg = <0 0x40000000 0 0x40000000>; /* 1 GB RAM */
+    };
+
+    leds {
+        compatible = "gpio-leds";
+
+        status_led: status {
+            label = "blue:status";
+            gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
+        };
+    };
+};
+
+&uart0 {
+    status = "okay";
+};
+
+&spi0 {
+    status = "okay";
+};
+
+&eth {
+    status = "okay";
+    mediatek,gmac-id = <0>;
+    phy-mode = "25g-base-r";
+
+    fixed-link {
+        speed = <2500>;
+        full-duplex;
+    };
+};
+
+&pinctrl {
+    pins {
+        conf {
+            pins = "GPIO_12";
+            drive-strength = <ALPS_DRIVE_STRENGTH_8MA>;
+        };
+    };
+};
