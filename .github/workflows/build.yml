@@ -1,15 +1,15 @@
-name: SN-R1 OpenWrt 25.12[cite: 1]
+name: SN-R1 OpenWrt 25.12
 
 on:
-  workflow_dispatch:[cite: 1]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04[cite: 1]
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4[cite: 1]
+        uses: actions/checkout@v4
 
       - name: Install build dependencies
         run: |
@@ -34,7 +34,7 @@ jobs:
             unzip \
             zlib1g-dev \
             file \
-            wget[cite: 1]
+            wget
 
       - name: Clone OpenWrt 25.12
         run: |
@@ -42,7 +42,7 @@ jobs:
             --branch openwrt-25.12 \
             --depth 1 \
             https://github.com/openwrt/openwrt.git \
-            openwrt[cite: 1]
+            openwrt
 
       - name: Restore OpenWrt Caches
         uses: actions/cache@v4
@@ -57,13 +57,13 @@ jobs:
       - name: Inject SN-R1 Board Files
         run: |
           cp -av target/linux/mediatek/dts/* openwrt/target/linux/mediatek/dts/
-          cp -av target/linux/mediatek/image/filogic.mk openwrt/target/linux/mediatek/image/filogic.mk[cite: 1]
+          cp -av target/linux/mediatek/image/filogic.mk openwrt/target/linux/mediatek/image/filogic.mk
 
       - name: Update feeds
         working-directory: openwrt
         run: |
           ./scripts/feeds update -a
-          ./scripts/feeds install -a[cite: 1]
+          ./scripts/feeds install -a
 
       - name: Configure firmware for SN-R1
         working-directory: openwrt
@@ -71,15 +71,15 @@ jobs:
           echo "CONFIG_TARGET_mediatek=y" >> .config
           echo "CONFIG_TARGET_mediatek_filogic=y" >> .config
           echo "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_snr1_bt-snr1=y" >> .config
-          make defconfig[cite: 1]
+          make defconfig
 
       - name: Build firmware image
         working-directory: openwrt
         run: |
-          make V=s -j$(nproc)[cite: 1]
+          make V=s -j$(nproc)
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openwrt-mediatek-filogic-snr1_bt-snr1-firmware
-          path: openwrt/bin/targets/mediatek/filogic/*[cite: 1]
+          path: openwrt/bin/targets/mediatek/filogic/*
